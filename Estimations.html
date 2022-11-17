@@ -45,6 +45,7 @@ div {
 
 
 <h3 class="w3-center">Estimations du prix de la course</h3>
+<h4 class="w3-center">Forfait minimum 50€.</h4>
 
 <div>
     <!--Formulaires villes, code postal, adresse de départ, adresse de destination-->
@@ -146,6 +147,11 @@ div {
                 document.getElementById('prix').innerHTML = prixArrondi;
                 document.getElementById('distance').innerHTML = distanceKmArrondi;
             }
+           // si la distance est en dessous de 25km le prix est de 50 eurso
+           if(distanceKmArrondi < 25){
+            document.getElementById('prix').innerHTML = 50;
+            document.getElementById('distance').innerHTML = distanceKmArrondi;
+           }
         }
       });
   }
