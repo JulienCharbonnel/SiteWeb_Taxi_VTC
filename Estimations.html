@@ -73,10 +73,12 @@ div {
   function ini_Autocompletion(id) 
   {
   var element = document.getElementById(id);
-  if (element) 
-  {
-    var autocompletion = new google.maps.places.Autocomplete(element, { types: ['geocode'] });
-    google.maps.event.addListener(autocompletion, 'place_changed', ini_Adresse);
+  if (element) {
+    // on limite la recherche à la France
+    var options = {
+      componentRestrictions: {country: 'fr'}
+    };
+    var autocomplete = new google.maps.places.Autocomplete(element, options);
   }
   }
 
