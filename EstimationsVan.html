@@ -135,20 +135,14 @@ div {
             var distanceKm = distance / 1000;
             var distanceKmArrondi = Math.round(distanceKm);
 
-            // si la distance est supérieure a 50km, le prix par km est de 2€
-            if (distanceKmArrondi > 50) {
+            // si la distance est supérieure a 50km, le prix par km est de 2.50€
+            if (distanceKmArrondi > 25) {
                 var prix = distanceKmArrondi * 2.50;
                 var prixArrondi = Math.round(prix);
                 document.getElementById('prix').innerHTML = prixArrondi;
                 document.getElementById('distance').innerHTML = distanceKmArrondi;
             }
-            // si la distance est inférieure a 50km, le prix par km est de 1€
-            else {
-                var prix = distanceKmArrondi * 2.30;
-                var prixArrondi = Math.round(prix);
-                document.getElementById('prix').innerHTML = prixArrondi;
-                document.getElementById('distance').innerHTML = distanceKmArrondi;
-            }
+
            // si la distance est en dessous de 25km le prix est de 50 eurso
            if(distanceKmArrondi < 25){
             document.getElementById('prix').innerHTML = 50;
