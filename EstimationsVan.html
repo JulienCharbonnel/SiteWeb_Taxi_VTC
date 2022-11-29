@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Estimations Van</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCuLTThGQi4X9QcApByoI2FTc9pxNb9EQ&libraries=places"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+</head>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+</style>
+<body>
+
+
+
+<h3 class="w3-center">Estimations du prix de la course pour un van</h3>
+<h4 class="w3-center">Forfait minimum 50€.</h4>
+
+<div>
+    <!--Formulaires villes, code postal, adresse de départ, adresse de destination-->
+    <form method="post">
+        <label for="villeDepart">Adresse de départ</label>
+        <input type="text" id="villeDepart" name="villeDepart" placeholder="Ville de départ">
+
+        <label for="adresseArrivee">Adresse d'arrivée</label>
+        <input type="text" id="adresseArrivee" name="adresseArrivee" placeholder="Adresse d'arrivée">
+    </form>
+    <!--Bouton vert en w3css pour valider le formulaire-->
+    <button class="w3-button w3-block w3-gray w3-section w3-padding" name="estimer" onclick="calculerRouteKm()">Estimer</button>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+  /**
+   * Fonction s'occupe de l'autocomplétion des champs ville de départ et ville d'arrivée
+   * @param {string} id de l'input
+   * 
+  */
+  function ini_Autocompletion(id) 
+  {
+  var element = document.getElementById(id);
+  if (element) {
+    // on limite la recherche à la France
+    var options = {
+      componentRestrictions: {country: 'fr'}
+    };
+    var autocomplete = new google.maps.places.Autocomplete(element, options);
+  }
+  }
+
+  /**
+   * Fonction qui récupère les données de l'adresse
+   * 
+  */
+  function ini_Adresse() 
+  {
+    var place = this.getPlace();
+    console.log(place);
+    for (var i in place.address_components) 
+    {
+      var component = place.address_components[i];
+      for (var j in component.types) 
+    {
+        var type_element = document.getElementById(component.types[j]);
+        if (type_element) 
+      {
+          type_element.value = component.long_name;
+        }
+      }
+    }
+  }
+
+  /**
+  * fonction qui écoute le chargement de la page et qui appelle la fonction ini_Autocompletion
+  */
+  google.maps.event.addDomListener(window, 'load', function()
+  {
+    ini_Autocompletion('villeDepart');
+    ini_Autocompletion('adresseArrivee');
+  });
+
+  /**
+   * Fonction qui calcule la distance entre deux points
+   * On utilise l'API de Google Maps pour calculer la distance entre deux adresses en km par rapport à la route
+   * 
+  */
+  function calculerRouteKm() {
+      var directionsService = new google.maps.DirectionsService();
+      var villeDepart = document.getElementById('villeDepart').value;
+      var adresseArrivee = document.getElementById('adresseArrivee').value;
+      var request = {
+          origin: villeDepart,
+          destination: adresseArrivee,
+          travelMode: google.maps.DirectionsTravelMode.DRIVING
+      };
+
+      // on utilise la méthode route de l'objet DirectionsService pour calculer la distance entre les deux points
+      directionsService.route(request, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) { // on verifie que le status est OK avant de calculer la distance
+            var distance = response.routes[0].legs[0].distance.value;
+            var distanceKm = distance / 1000;
+            var distanceKmArrondi = Math.round(distanceKm);
+
+            // si la distance est supérieure a 50km, le prix par km est de 2€
+            if (distanceKmArrondi > 50) {
+                var prix = distanceKmArrondi * 2.50;
+                var prixArrondi = Math.round(prix);
+                document.getElementById('prix').innerHTML = prixArrondi;
+                document.getElementById('distance').innerHTML = distanceKmArrondi;
+            }
+            // si la distance est inférieure a 50km, le prix par km est de 1€
+            else {
+                var prix = distanceKmArrondi * 2.30;
+                var prixArrondi = Math.round(prix);
+                document.getElementById('prix').innerHTML = prixArrondi;
+                document.getElementById('distance').innerHTML = distanceKmArrondi;
+            }
+           // si la distance est en dessous de 25km le prix est de 50 eurso
+           if(distanceKmArrondi < 25){
+            document.getElementById('prix').innerHTML = 50;
+            document.getElementById('distance').innerHTML = distanceKmArrondi;
+           }
+        }
+      });
+  }
+  </script>  
+
+  <p class="w3-center" style="font-size: 25px;">La distance entre les deux adresses est de <span id="distance"></span> km.</p>
+  <p class="w3-center" style="font-size: 25px">Le prix de la course est de <span id="prix"></span> €.</p>
+
+  <!--On centre un bouton de 150 px pour revenir a index.html-->
+  <div class="w3-center">
+    <a href="index.html"><button class="w3-button  w3-gray w3-section w3-padding" style="width: 150px;">Retour</button></a>
+  </div>
+  
+</body>
+</html>
